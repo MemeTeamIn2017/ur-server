@@ -14,12 +14,12 @@ class WStoJSONAdapter : SimpleChannelInboundHandler<TextWebSocketFrame>() {
 	
 	override fun channelActive(ctx: ChannelHandlerContext) {
 		// on Connect
-		println("[Connect][${String.format("", System.currentTimeMillis())}] ${ctx.channel().remoteAddress()}")
+		println("[WS][Connect][${String.format("", System.currentTimeMillis())}] ${ctx.channel().remoteAddress()}")
 	}
 	
 	override fun channelInactive(ctx: ChannelHandlerContext) {
 		// on Disconnect
-		println("[Disconnect][${String.format("", System.currentTimeMillis())}] ${ctx.channel().remoteAddress()}")
+		println("[WS][Disconnect][${String.format("", System.currentTimeMillis())}] ${ctx.channel().remoteAddress()}")
 		
 	}
 	
