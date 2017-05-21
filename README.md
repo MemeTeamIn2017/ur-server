@@ -7,15 +7,16 @@ easy to develop for and expand while being adequately fast to parse.
 This protocol defines a concept of _PACKET_ as an _COMPLETE_ object being
 sent or received. Every packet is a valid JSON object. It MUST contain
 a field `{"id" : "PACKET_ID"}` which is the **PACKET_ID** of this packet, other
-fields' contents are defined by the **PACKET_ID**. 
-## Packets
-### Client
-##### AUTHENTICATE - "auth"
+fields' contents are defined by the **PACKET_ID**.
+
+# Packets
+## Client
+#### AUTHENTICATE - "auth"
 
 This is the first packet the server receives. If any other packet is received before this one, the server will automatically ban for 1 hour (subject to change).
 
 Data fields:
-* name:String - the name of the player.
+* name: String - the name of the player.
 
 Example:
 ```json
@@ -26,39 +27,40 @@ Example:
 ```
 
 
-##### CHALLENGE PLAYER - "challenge_player"
+#### CHALLENGE PLAYER - "challenge_player"
 Challenges another player in a game of Ur.
 The other Player can respond with a Yes/No. The client should wait for this response. (RESPONSE_HERE)
 ```json
 {
   "id": "challenge_player",
-  "opponent": "Noob1337",
+  "opponent": "Noob1337"
 }
 ```
-### Server
-##### LOGIN_SUCCESSFUL - "login_success"
-No additional fields.
+## Server
 
-##### LOGIN_FAILED - "login_failed"
+#### LOGIN_FAILED - "auth_status"
 Signals that the server has rejected the Auth request.
 This could mean that the name is taken, or the server is under heavy load.
 The reason for the fail is given in the `reason` field.
 
+* successful: Boolean - the status, `true` if it was successful, `false` otherwise.
 * reason: String - the reason for the Auth fail.
 
 Possible reasons:
 * name_taken
-* TODO add other reason
+* TODO add other reasons
 
 Example:
+
 ```json
 {
-  "id":   "login_failed",
+  "id": "auth_status",
   "reason": "name_taken"
 }
 ```
-##### CHALLENGE RESPONSE - "challenge_response"
+#### CHALLENGE RESPONSE - "challenge_response"
 This packet is sent to a client when their opponent accepts or declines the request for a PvP game.
+
 Fields:
 * opponent:String - the name of the opponent.
 * accepted:Boolean - `true` if the opponent accepted, `false` otherwise.
