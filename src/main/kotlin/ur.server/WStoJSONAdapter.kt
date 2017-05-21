@@ -8,16 +8,19 @@ class WStoJSONAdapter : SimpleChannelInboundHandler<TextWebSocketFrame>() {
 	}
 	
 	fun onNameSet(ctx: ChannelHandlerContext, name: String) {
-	
+		// called when
 	}
 	
 	
 	override fun channelActive(ctx: ChannelHandlerContext) {
 		// on Connect
+		println("[Connect][${String.format("", System.currentTimeMillis())}] ${ctx.channel().remoteAddress()}")
 	}
 	
 	override fun channelInactive(ctx: ChannelHandlerContext) {
 		// on Disconnect
+		println("[Disconnect][${String.format("", System.currentTimeMillis())}] ${ctx.channel().remoteAddress()}")
+		
 	}
 	
 }

@@ -69,10 +69,10 @@ class FallbackReadHandler : ChannelInboundHandlerAdapter() {
 		ctx.close()
 	}
 	
-	override fun exceptionCaught(ctx: ChannelHandlerContext?, cause: Throwable?) {
+	override fun exceptionCaught(ctx: ChannelHandlerContext, cause: Throwable) {
 		println(cause)
 		println("punishing")
-		ctx?.close()
+		ctx.close()
 		
 	}
 }
