@@ -10,7 +10,7 @@ a field `{"id" : "PACKET_ID"}` which is the **PACKET_ID** of this packet, other
 fields' contents are defined by the **PACKET_ID**.
 
 # Packets
-## Client
+## Client can send...
 #### AUTHENTICATE - "auth"
 
 This is the first packet the server receives. If any other packet is received before this one, the server will automatically ban for 1 hour (subject to change).
@@ -36,7 +36,7 @@ The other Player can respond with a Yes/No. The client should wait for this resp
   "opponent": "Noob1337"
 }
 ```
-## Server
+## Server can send...
 
 #### LOGIN_FAILED - "auth_status"
 Signals that the server has rejected the Auth request.
