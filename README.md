@@ -1,4 +1,4 @@
-# Protocol Protocol Specification
+# Ur Game Protocol Specification
 
 This protocol uses JSON as a data transfer means and it inherits
 all the restrictions of the JSON standard. It is designed to be
