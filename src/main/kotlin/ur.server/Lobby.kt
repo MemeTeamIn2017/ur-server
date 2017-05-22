@@ -5,10 +5,11 @@ import io.netty.channel.Channel
 import java.util.*
 
 /**
- * TODO Add class description
+ * Contains the Lobby logic.
  * Created by Braynstorm on 7.5.2017 г..
  */
 object Lobby {
+	
 	/**
 	 * Holds all players, key-ed by name.
 	 */
