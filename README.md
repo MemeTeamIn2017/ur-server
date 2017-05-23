@@ -55,6 +55,7 @@ Example:
 ```json
 {
   "id": "auth_status",
+  "successful": false,
   "reason": "name_taken"
 }
 ```
