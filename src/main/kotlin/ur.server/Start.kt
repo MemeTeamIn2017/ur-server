@@ -12,9 +12,14 @@ import io.netty.handler.codec.http.HttpRequestDecoder
 import io.netty.handler.codec.http.HttpResponseEncoder
 import io.netty.handler.codec.http.websocketx.WebSocketServerProtocolHandler
 import io.netty.util.concurrent.DefaultEventExecutorGroup
+import io.netty.util.internal.logging.InternalLoggerFactory
+import io.netty.util.internal.logging.Slf4JLoggerFactory
+import mu.KotlinLogging
 import java.util.*
 
 fun main(args: Array<String>) {
+	val logger = KotlinLogging.logger("ur.server.main()")
+	
 	val port = 4269
 	val serverGroup = NioEventLoopGroup(1)
 	val clientGroup = NioEventLoopGroup()
@@ -28,30 +33,35 @@ fun main(args: Array<String>) {
 							HttpRequestDecoder(),
 							HttpObjectAggregator(65536),
 							HttpResponseEncoder(),
-							WebSocketServerProtocolHandler("/"))
-							.addLast(executorGroup, WStoJSONAdapter()/*, JsonPacketCodec(), PacketReceiveHandler(), PacketSendHandler(), FallbackReadHandler()*/)
+							WebSocketServerProtocolHandler("/")
+					).addLast(executorGroup, WStoJSONAdapter())
+					/*, JsonPacketCodec(), PacketReceiveHandler(), PacketSendHandler(), FallbackReadHandler()*/
 				}
 			})
 	
 	val future = bs.bind(port).addListener { future ->
 		with(future as ChannelFuture) {
 			if (future.isSuccess) {
-				println("[SERVER] Server open on $port")
+				logger.info { "Server open on $port" }
 				future.channel().closeFuture().addListener {
 					serverGroup.shutdownGracefully()
 					clientGroup.shutdownGracefully()
 				}
 			} else {
-				println("[SERVER] Failed to open on port $port.")
-				future.cause().printStackTrace()
+				logger.error(future.cause()) { "Server failed to open on $port" }
 				serverGroup.shutdownGracefully()
 				clientGroup.shutdownGracefully()
 			}
 		}
 	}
 	
+	
 	val sc = Scanner(System.`in`)
-	sc.next()
+	
+	while (sc.nextLine() != "exit") {
+	}
+	
+	sc.close()
 	future.channel().close()
 	
 	

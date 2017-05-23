@@ -2,13 +2,22 @@ package ur.server
 
 import com.fasterxml.jackson.databind.JsonNode
 import io.netty.channel.Channel
+import jsonObjectMapper
+import mu.KLoggable
+import mu.KLogger
 import java.util.*
 
 /**
  * Contains the Lobby logic.
  * Created by Braynstorm on 7.5.2017 г..
  */
-object Lobby {
+object Lobby : KLoggable {
+	
+	private object Const {
+		val NAME_TAKEN = jsonObjectMapper.readTree("""{"id":"auth_status","status":false,"reason":"name_taken"}\n""")!!
+	}
+	
+	override val logger: KLogger = logger()
 	
 	/**
 	 * Holds all players, key-ed by name.
@@ -37,23 +46,22 @@ object Lobby {
 	fun tryAuthenticate(channel: Channel, connectionType: ConnectionType, name: String) {
 		if (this has channel) { // the player has already been authenticated.
 			// TODO log it
-			println("[Lobby] Attempted reAuthentication from ${this[channel].remoteAddress}. Ignoring.")
+			logger.warn { "Attempted ReAuthentication by ${this[channel]}" }
 			return
 		}
 		
 		var name = name
 		
 		// Sanitization
-		
 		if (name.contains(regexMatchHtmlTag)) {
-			// TODO log it
+			// TODO punish(illegal characters in name)
+			logger.warn { "Name contains < or > [socket=${channel.remoteAddress()}, name=$name]" }
 		}
 		
 		
 		if (this has name) {
-			// the name is taken
-			// TODO log it
-			println("[Lobby]NameTaken")
+			logger.info { "Channel sent a name that is already in use. [channel=${channel.remoteAddress()}, name=$name]" }
+			channel.writeAndFlush(Const.NAME_TAKEN)
 			return
 		}
 		
@@ -63,8 +71,8 @@ object Lobby {
 		playersByName[name] = player
 		playersByChannel[channel] = player
 		
-		
-		println("[Lobby] Log in $name:${player.remoteAddress} ")
+		logger.info { "Successful authentication from $player." }
+		// TODO sendUpdateToEveryone.
 	}
 	
 	/**
@@ -79,6 +87,7 @@ object Lobby {
 	
 	/**
 	 * Removes all signs of [channel] in the Lobby.
+	 * Silent.
 	 */
 	fun removeChannel(channel: Channel) {
 		if (has(channel)) {

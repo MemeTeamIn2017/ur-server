@@ -12,11 +12,7 @@ import ur.server.internal.InternalPacketCodec
  * TODO Add class description
  * Created by Braynstorm on 7.5.2017 г..
  */
-val jsonObjectMapper = ObjectMapper().also {
-	//	it.configure(JsonParser.Feature.AUTO_CLOSE_SOURCE, false)
-}
-//val logger = KotlinLogging.logger { }
-
+@FutureUse
 class JsonPacketCodec : ByteToMessageCodec<JsonNode>(false) {
 //	override val logger: KLogger = KotlinLogging.logger("JsonPacketCodec")
 	
@@ -35,6 +31,7 @@ class JsonPacketCodec : ByteToMessageCodec<JsonNode>(false) {
 	
 }
 
+@FutureUse
 class PacketReceiveHandler : SimpleChannelInboundHandler<JsonNode>() {
 	override fun channelActive(ctx: ChannelHandlerContext) {
 		println("[Connect][${String.format("", System.currentTimeMillis())}] ${ctx.channel().remoteAddress()}")
@@ -51,7 +48,7 @@ class PacketReceiveHandler : SimpleChannelInboundHandler<JsonNode>() {
 	}
 }
 
-
+@FutureUse
 class PacketSendHandler : ChannelOutboundHandlerAdapter() {
 	override fun write(ctx: ChannelHandlerContext, msg: Any, promise: ChannelPromise) {
 		if (msg is ByteBuf) {
@@ -63,6 +60,7 @@ class PacketSendHandler : ChannelOutboundHandlerAdapter() {
 	}
 }
 
+@FutureUse
 class FallbackReadHandler : ChannelInboundHandlerAdapter() {
 	override fun channelRead(ctx: ChannelHandlerContext, msg: Any) {
 		println("fail")
