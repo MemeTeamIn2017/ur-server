@@ -8,12 +8,15 @@ import mu.KLogger
 import ur.server.ConnectionType
 import ur.server.JsonUtils
 import ur.server.Lobby
-import ur.server.Packets
+import ur.server.Packet
 
 
 class WStoJSONAdapter : SimpleChannelInboundHandler<TextWebSocketFrame>(), KLoggable {
 	override val logger: KLogger = logger()
 	
+	/**
+	 * Gets called when the channel receives a full String packet.
+	 */
 	override fun channelRead0(ctx: ChannelHandlerContext, msg: TextWebSocketFrame) {
 		val channel = ctx.channel()
 		val json: JsonNode
@@ -22,38 +25,54 @@ class WStoJSONAdapter : SimpleChannelInboundHandler<TextWebSocketFrame>(), KLogg
 			json = JsonUtils parse msg.text()
 		} catch(e: JsonParseException) {
 			// TODO punish(connection sent invalid json)
-			logger.warn { "Caught invalid JSON from client. ${channel.remoteAddress()}" }
+			if (Lobby has ctx.channel()) {
+				logger.info(e) { "Invalid JSON received from Player. ${Lobby[ctx.channel()]}" }
+			} else {
+				logger.info(e) { "Invalid JSON received from Channel. ${channel.remoteAddress()}" }
+			}
 			return
 		}
 		
 		
 		val packetID = json["id"].let {
 			if (!it.isTextual) {
-				// TODO punish(invalid packet)
+				// TODO punish(invalid packet id)
+				if (Lobby has ctx.channel()) {
+					logger.info { "Invalid Packet (packet id isn't string) received from Player. ${Lobby[ctx.channel()]}" }
+				} else {
+					logger.info { "Invalid Packet (packet id isn't string) received from Channel. ${channel.remoteAddress()}" }
+				}
 				return
 			}
 			
 			val txt = it.asText().toUpperCase()
 			
-			txt
-		}
-		
-		
-		
-		
-		if (Lobby.has(channel)) {
-			Lobby[channel].receive(json)
-		} else {
-			if (packetID != Packets.AUTH) {
-				// TODO punish(non-player sent non-auth packet)
-				logger.warn { "Non-player sent non-auth packet. [socket=${channel.remoteAddress()}, id=\"${json.get("id")}\"" }
+			try {
+				// "return"
+				Packet.valueOf(txt)
+			} catch (e: IllegalArgumentException) {
+				// TODO punish(unknown packet id)
+				if (Lobby has ctx.channel()) {
+					logger.info(e) { "Unknown packet ID received from Player. [id=$txt, player=${Lobby[ctx.channel()]}]" }
+				} else {
+					logger.info(e) { "Unknown packet ID received from Channel. [id=$txt, channel=${channel.remoteAddress()}]" }
+				}
 				return
 			}
-			
-			// TODO sanitize name
-			
-			Lobby.tryAuthenticate(channel, ConnectionType.WEB_SOCKET, json["name"].asText())
 		}
+		
+		if (Lobby.has(channel)) {
+			Lobby[channel].receive(packetID, json)
+			return
+		}
+		
+		if (packetID != Packet.AUTH) {
+			// TODO punish(non-player sent non-auth packet)
+			logger.warn { "Non-player sent non-auth packet. [socket=${channel.remoteAddress()}, id=$packetID]" }
+			return
+		}
+		
+		Lobby.tryAuthenticate(channel, ConnectionType.WEB_SOCKET, json["name"].asText())
 	}
 	
 	private fun onNameSet(ctx: ChannelHandlerContext, name: String) {

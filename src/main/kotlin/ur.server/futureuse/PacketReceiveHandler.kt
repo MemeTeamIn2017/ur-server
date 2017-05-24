@@ -7,10 +7,6 @@ import io.netty.channel.*
 import io.netty.handler.codec.ByteToMessageCodec
 import ur.server.internal.InternalPacketCodec
 
-/**
- * TODO Add class description
- * Created by Braynstorm on 7.5.2017 г..
- */
 @FutureUse
 class JsonPacketCodec : ByteToMessageCodec<JsonNode>(false) {
 //	override val logger: KLogger = KotlinLogging.logger("JsonPacketCodec")

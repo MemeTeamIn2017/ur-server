@@ -9,7 +9,6 @@ import ur.server.internal.InternalPacketCodec
 import java.util.Random
 
 /**
- * TODO Add class description
  * Created by Braynstorm on 7.5.2017 г..
  */
 internal class InternalPacketCodecTest {
