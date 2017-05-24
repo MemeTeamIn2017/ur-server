@@ -1,10 +1,8 @@
 package ur.server
 
-import com.fasterxml.jackson.databind.JsonNode
 import io.netty.channel.Channel
 import mu.KLoggable
 import mu.KLogger
-import java.util.*
 
 /**
  * Contains the Lobby logic.
@@ -44,22 +42,20 @@ object Lobby : KLoggable {
 	 */
 	fun tryAuthenticate(channel: Channel, connectionType: ConnectionType, name: String) {
 		if (this has channel) { // the player has already been authenticated.
-			// TODO log it
-			logger.warn { "Attempted ReAuthentication by ${this[channel]}" }
+			logger.info { "Attempted ReAuthentication by ${this[channel]}" }
 			return
 		}
-		
-		var name = name
 		
 		// Sanitization
 		if (name.contains(regexMatchHtmlTag)) {
 			// TODO punish(illegal characters in name)
 			logger.warn { "Name contains < or > [socket=${channel.remoteAddress()}, name=$name]" }
+			return
 		}
 		
 		
 		if (this has name) {
-			logger.info { "Channel sent a name that is already in use. [channel=${channel.remoteAddress()}, name=$name]" }
+			logger.info { "Channel sent a name that is already in use. [socket=${channel.remoteAddress()}, name=$name]" }
 			channel.writeAndFlush(Const.NAME_TAKEN)
 			return
 		}
@@ -70,7 +66,7 @@ object Lobby : KLoggable {
 		playersByName[name] = player
 		playersByChannel[channel] = player
 		
-		logger.info { "Successful authentication from $player." }
+		logger.info { "Successful authentication. Welcome $player!" }
 		// TODO sendUpdateToEveryone.
 	}
 	
@@ -85,6 +81,19 @@ object Lobby : KLoggable {
 	infix fun has(channel: Channel): Boolean = playersByChannel.containsKey(channel)
 	
 	/**
+	 * Gets called on channelActive evnet.
+	 * Must add the channel to the non-auth set.
+	 */
+	fun addChannel(channel: Channel) {
+		if (has(channel)) {
+			logger.warn { "Retention error, player fired ChannelActive event. ${this[channel]}" }
+			return
+		}
+		
+		channels += channel
+	}
+	
+	/**
 	 * Removes all signs of [channel] in the Lobby.
 	 * Silent.
 	 */
@@ -93,37 +102,14 @@ object Lobby : KLoggable {
 			playersByName.remove(playersByChannel.remove(channel)?.name ?: return)
 		}
 		
-		channels.remove(channel)
+		channels -= channel
 	}
-}
-
-internal class NoSuchPlayerException(name: String) : Exception(name)
-internal class NoSuchChannelException(channel: Channel) : Exception(channel.remoteAddress().toString())
-
-
-data class Player(private val channel: Channel,
-                  val connectionType: ConnectionType,
-                  val name: String,
-                  val locale: Locale = Locale.ENGLISH,
-                  var ingame: Boolean = false
-) {
-	
-	val remoteAddress: String = channel.remoteAddress().toString()
 	
 	/**
-	 * Sends [packet] over the underlying [channel].
+	 * Indicates the amount of [Player] instances currently online.
 	 */
-	fun send(packet: JsonNode) {
-		channel.writeAndFlush(packet)
-	}
-	
-	fun receive(packet: JsonNode) {
-	
-	}
-	
-	
+	val connectedPlayers get () = playersByChannel.entries.size
 }
 
-enum class ConnectionType {
-	WEB_SOCKET
-}
+
+

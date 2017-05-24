@@ -1,6 +1,5 @@
 import com.fasterxml.jackson.core.JsonParseException
 import com.fasterxml.jackson.databind.JsonNode
-import com.fasterxml.jackson.databind.ObjectMapper
 import io.netty.channel.ChannelHandlerContext
 import io.netty.channel.SimpleChannelInboundHandler
 import io.netty.handler.codec.http.websocketx.TextWebSocketFrame
@@ -9,6 +8,7 @@ import mu.KLogger
 import ur.server.ConnectionType
 import ur.server.JsonUtils
 import ur.server.Lobby
+import ur.server.Packets
 
 
 class WStoJSONAdapter : SimpleChannelInboundHandler<TextWebSocketFrame>(), KLoggable {
@@ -33,7 +33,9 @@ class WStoJSONAdapter : SimpleChannelInboundHandler<TextWebSocketFrame>(), KLogg
 				return
 			}
 			
-			it.asText()
+			val txt = it.asText().toUpperCase()
+			
+			txt
 		}
 		
 		
@@ -42,7 +44,7 @@ class WStoJSONAdapter : SimpleChannelInboundHandler<TextWebSocketFrame>(), KLogg
 		if (Lobby.has(channel)) {
 			Lobby[channel].receive(json)
 		} else {
-			if (packetID != "auth") {
+			if (packetID != Packets.AUTH) {
 				// TODO punish(non-player sent non-auth packet)
 				logger.warn { "Non-player sent non-auth packet. [socket=${channel.remoteAddress()}, id=\"${json.get("id")}\"" }
 				return
@@ -61,11 +63,15 @@ class WStoJSONAdapter : SimpleChannelInboundHandler<TextWebSocketFrame>(), KLogg
 	
 	override fun channelActive(ctx: ChannelHandlerContext) {
 		logger.info { "Connected ${ctx.channel().remoteAddress()} }" }
+		Lobby.addChannel(ctx.channel())
 	}
 	
 	// on Connect
 	override fun channelInactive(ctx: ChannelHandlerContext) {
 		// on Disconnect
 		logger.info { "Disconnected ${ctx.channel().remoteAddress()} }" }
+		Lobby.removeChannel(ctx.channel())
 	}
+	
+	
 }

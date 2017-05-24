@@ -1,4 +1,4 @@
-package ur.server
+package ur.server.futureuse
 
 /**
  * Created by braynstorm on 24.05.17.

@@ -11,7 +11,7 @@ fields' contents are defined by the **PACKET_ID**.
 
 # Packets
 ## Client can send...
-#### AUTHENTICATE - "auth"
+#### AUTHENTICATE - "AUTH"
 
 This is the first packet the server receives. If any other packet is received before this one, the server will automatically ban for 1 hour (subject to change).
 
@@ -21,24 +21,24 @@ Data fields:
 Example:
 ```json
 {
-  "id": "auth",
+  "id": "AUTH",
   "name": "NoobSlay3r"
 }
 ```
 
 
-#### CHALLENGE PLAYER - "challenge_player"
+#### CHALLENGE PLAYER - "CHALLENGE_PLAYER"
 Challenges another player in a game of Ur.
 The other Player can respond with a Yes/No. The client should wait for this response. (RESPONSE_HERE)
 ```json
 {
-  "id": "challenge_player",
+  "id": "CHALLENGE_PLAYER",
   "opponent": "Noob1337"
 }
 ```
 ## Server can send...
 
-#### LOGIN_FAILED - "auth_status"
+#### LOGIN_FAILED - "AUTH_STATUS"
 Signals that the server has rejected the Auth request.
 This could mean that the name is taken, or the server is under heavy load.
 The reason for the fail is given in the `reason` field.
@@ -47,19 +47,19 @@ The reason for the fail is given in the `reason` field.
 * reason: String - the reason for the Auth fail.
 
 Possible reasons:
-* name_taken
+* NAME_TAKEN
 * TODO add other reasons
 
 Example:
 
 ```json
 {
-  "id": "auth_status",
+  "id": "AUTH_STATUS",
   "successful": false,
-  "reason": "name_taken"
+  "reason": "NAME_TAKEN"
 }
 ```
-#### CHALLENGE RESPONSE - "challenge_response"
+#### CHALLENGE RESPONSE - "CHALLENGE_RESPONSE"
 This packet is sent to a client when their opponent accepts or declines the request for a PvP game.
 
 Fields:
@@ -69,7 +69,7 @@ Fields:
 Example:
 ```json
 {
-  "id": "challenge_response",
+  "id": "CHALLENGE_RESPONSE",
   "opponent": "Noob1337",
   "accepted": true
 }
