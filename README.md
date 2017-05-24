@@ -48,8 +48,10 @@ Otherwise, `reason` contains the reason for the auth fail.
 * [optional] reason: String - the reason for the Auth fail.
 
 Possible values for `reason`:
-* NAME_TAKEN
-* SUSPENDED
+* TAKEN - if the name is already in use.
+* ILLEGAL_CHARACTERS - contains `<` or `>` 
+* LENGTH - too short or too long (must be >= 4 and <= 20))
+* SUSPENDED - NYI.
 
 *TODO add other reasons*
 
@@ -66,6 +68,18 @@ Example:
 This packet will be sent right after AUTH_STATUS for the newly authenticated player,
 to be updated on the lobby player list. This packet is never going to be sent after that.
 Instead, for each player joining or leaving there will be another packet.
+
+* players:Array(set) - the players in the lobby.
+
+```json
+{
+  "id": "LOBBY_LIST",
+  "players": [
+    {"name": "NoobSprayer442", "locale": "en"},
+    {"name": "MasterOfDisa5ter", "locale": "bg"}
+  ]
+}
+```
 
 #### PLAYER JOINED LOBBY - "PLAYER_JOINED_LOBBY"
 This packet will be sent to all players everytime a player joins the lobby (a.k.a is authenticated).
@@ -94,7 +108,7 @@ Fields:
 Example:
 ```json
 {
-  "id": "PLAYER_JOINED_LOBBY",
+  "id": "PLAYER_LEFT_LOBBY",
   "name": "NoobMaster3311",
   "locale": "BG"
 }

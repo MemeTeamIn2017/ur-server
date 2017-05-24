@@ -11,8 +11,10 @@ import mu.KLogger
 object Lobby : KLoggable {
 	
 	private object Const {
-		val NAME_TAKEN = JsonUtils parse """{"id":"${Packet.AUTH_STATUS.name}","status":false,"reason":"name_taken"}\n"""
-		val AUTH_SUCCESSFUL = JsonUtils parse """{"id":"${Packet.AUTH_STATUS.name}","status":true}\n"""
+		val AUTH_FAIL_TAKEN = """{"id":"${Packet.AUTH_STATUS.name}","status":false,"reason":"TAKEN"}"""
+		val AUTH_FAIL_LENGTH = """{"id":"${Packet.AUTH_STATUS.name}","status":false,"reason":"LENGTH"}"""
+		val AUTH_FAIL_ILLEGAL_CHARACTERS = """{"id":"${Packet.AUTH_STATUS.name}","status":false,"reason":"ILLEGAL_CHARACTERS"}"""
+		val AUTH_SUCCESSFUL = """{"id":"${Packet.AUTH_STATUS.name}","status":true}"""
 	}
 	
 	override val logger: KLogger = logger()
@@ -42,36 +44,52 @@ object Lobby : KLoggable {
 	 * Gets called when [channel] sends an AUTHENTICATE packet.
 	 */
 	fun tryAuthenticate(channel: Channel, connectionType: ConnectionType, name: String) {
-		if (this has channel) {
-			// the player has already been authenticated.
-			// TODO punish(player reAuth)
-			logger.info { "Attempted ReAuthentication by ${this[channel]}" }
-			return
-		}
-		
 		// Data normalization
-		if (name.contains(regexMatchHtmlTag)) {
-			// TODO punish(illegal characters in name)
-			logger.warn { "Name contains < or > [socket=${channel.remoteAddress()}, name=$name]" }
-			return
-		}
 		
 		
 		if (this has name) {
 			logger.info { "Channel sent a name that is already in use. [socket=${channel.remoteAddress()}, name=$name]" }
-			channel.writeAndFlush(Const.NAME_TAKEN)
+			channel.writeAndFlush(Const.AUTH_FAIL_TAKEN)
 			return
 		}
 		
+		if (name.length < 4 || name.length > 20) {
+			logger.info { "Length error on authentication. [socket=${channel.remoteAddress()}, name=$name]" }
+			channel.writeAndFlush(Const.AUTH_FAIL_LENGTH)
+			return
+		}
+		
+		if (name.contains(regexMatchHtmlTag)) {
+			// TODO punish(illegal characters in name)
+			logger.warn { "Name contains < or >. [socket=${channel.remoteAddress()}, name=$name]" }
+			channel.writeAndFlush(Const.AUTH_FAIL_ILLEGAL_CHARACTERS)
+			return
+		}
+		
+		// We've passed all the tests. Make the new player and add them to the lobby
+		// action! :D
+		
 		channels.remove(channel)
 		val player = Player(channel, connectionType, name /*, TODO locale */)
+		
+		val playerListPacket = JsonUtils stringify PacketPlayerList(playersByName.values)
+		val playerJoinedPacket = JsonUtils stringify PlayerJoinedPacket(player)
+		
+		
+		playersByChannel.forEach { _, player ->
+			player.send(playerJoinedPacket)
+		}
 		
 		playersByName[name] = player
 		playersByChannel[channel] = player
 		
 		logger.info { "Successful authentication. Welcome $player!" }
 		player.send(Const.AUTH_SUCCESSFUL)
-		// TODO sendUpdateToEveryone.
+		
+		logger.debug { playerListPacket }
+		player.send(playerListPacket)
+		player.send(JsonUtils stringify "{}")
+		
 	}
 	
 	/**

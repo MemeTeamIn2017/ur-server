@@ -1,17 +1,20 @@
 package ur.server
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties
 import com.fasterxml.jackson.databind.JsonNode
 import io.netty.channel.Channel
 import mu.KLoggable
 import mu.KLogger
 import java.util.*
 
+@JsonIgnoreProperties("connectionType", "remoteAddress", "logger")
 data class Player(private val channel: Channel,
                   val connectionType: ConnectionType,
                   val name: String,
                   val locale: Locale = Locale.ENGLISH,
                   var ingame: Boolean = false
 ) : KLoggable {
+	
 	override val logger: KLogger = logger()
 	
 	val remoteAddress: String = channel.remoteAddress().toString()
@@ -20,7 +23,18 @@ data class Player(private val channel: Channel,
 	 * Sends [packet] over the underlying [channel].
 	 */
 	fun send(packet: JsonNode) {
+		channel.writeAndFlush(JsonUtils stringify packet)
+		logger.trace { "Sent JsonNode to player" }
+	}
+	
+	fun send(string: String) {
+		channel.writeAndFlush(string)
+		logger.trace { "Sent raw string to player" }
+	}
+	
+	fun send(packet: PacketClass) {
 		channel.writeAndFlush(packet)
+		logger.trace { "Sent PacketClass to player." }
 	}
 	
 	/**
@@ -44,6 +58,5 @@ data class Player(private val channel: Channel,
 		}
 		
 	}
-	
 	
 }

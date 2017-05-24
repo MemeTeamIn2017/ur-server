@@ -34,11 +34,10 @@ fun main(args: Array<String>) {
 							HttpObjectAggregator(65536),
 							HttpResponseEncoder(),
 							WebSocketServerProtocolHandler("/"),
-							JSONtoWSFrameAdapter()
-					).addLast(executorGroup, StringToJSONAdapter()
-//					).addLast(executorGroup, JSONtoWSFrameAdapter()
+							WSFrameInboundHandler(),
+							StringToWSFrameEncoder(),
+							PacketClassToStringEncoder()
 					)
-					/*, JsonPacketCodec(), PacketReceiveHandler(), PacketSendHandler(), FallbackReadHandler()*/
 				}
 			})
 	

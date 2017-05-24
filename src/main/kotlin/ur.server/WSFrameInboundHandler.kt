@@ -9,7 +9,7 @@ import mu.KLoggable
 import mu.KLogger
 
 
-class StringToJSONAdapter : SimpleChannelInboundHandler<TextWebSocketFrame>(), KLoggable {
+class WSFrameInboundHandler : SimpleChannelInboundHandler<TextWebSocketFrame>(), KLoggable {
 	override val logger: KLogger = logger()
 	
 	/**
@@ -59,18 +59,23 @@ class StringToJSONAdapter : SimpleChannelInboundHandler<TextWebSocketFrame>(), K
 			}
 		}
 		
-		if (Lobby.has(channel)) {
-			Lobby[channel].receive(packetID, json)
-			return
-		}
 		
-		if (packetID != Packet.AUTH) {
-			// TODO punish(non-player sent non-auth packet)
-			logger.warn { "Non-player sent non-auth packet. [socket=${channel.remoteAddress()}, id=$packetID]" }
-			return
+		if (!Lobby.has(channel)) {
+			if (packetID == Packet.AUTH) {
+				Lobby.tryAuthenticate(channel, ConnectionType.WEB_SOCKET, json["name"].asText())
+			} else {
+				// TODO punish(non-player sent non-auth packet)
+				logger.warn { "Non-player sent non-auth packet. [socket=${channel.remoteAddress()}, id=$packetID]" }
+			}
+		} else {
+			if (Lobby has channel) {
+				// the player has already been authenticated.
+				// TODO punish(player reAuth)
+				logger.warn { "Attempted ReAuthentication by ${Lobby[channel]}" }
+			} else {
+				Lobby[channel].receive(packetID, json)
+			}
 		}
-		
-		Lobby.tryAuthenticate(channel, ConnectionType.WEB_SOCKET, json["name"].asText())
 	}
 	
 	private fun onNameSet(ctx: ChannelHandlerContext, name: String) {
@@ -81,7 +86,6 @@ class StringToJSONAdapter : SimpleChannelInboundHandler<TextWebSocketFrame>(), K
 	override fun channelActive(ctx: ChannelHandlerContext) {
 		logger.info { "Connected ${ctx.channel().remoteAddress()} }" }
 		Lobby.addChannel(ctx.channel())
-		ctx.channel().writeAndFlush("{\"id\":\"HI\"}\n")
 	}
 	
 	// on Connect
