@@ -7,9 +7,9 @@ import io.netty.handler.codec.http.websocketx.TextWebSocketFrame
 import mu.KLoggable
 import mu.KLogger
 import ur.server.ConnectionType
+import ur.server.JsonUtils
 import ur.server.Lobby
 
-val jsonObjectMapper = ObjectMapper()
 
 class WStoJSONAdapter : SimpleChannelInboundHandler<TextWebSocketFrame>(), KLoggable {
 	override val logger: KLogger = logger()
@@ -19,7 +19,7 @@ class WStoJSONAdapter : SimpleChannelInboundHandler<TextWebSocketFrame>(), KLogg
 		val json: JsonNode
 		
 		try {
-			json = jsonObjectMapper.readTree(msg.text())
+			json = JsonUtils parse msg.text()
 		} catch(e: JsonParseException) {
 			// TODO punish(connection sent invalid json)
 			logger.warn { "Caught invalid JSON from client. ${channel.remoteAddress()}" }

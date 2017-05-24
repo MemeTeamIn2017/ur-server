@@ -2,7 +2,6 @@ package ur.server
 
 import com.fasterxml.jackson.databind.JsonNode
 import io.netty.channel.Channel
-import jsonObjectMapper
 import mu.KLoggable
 import mu.KLogger
 import java.util.*
@@ -14,7 +13,7 @@ import java.util.*
 object Lobby : KLoggable {
 	
 	private object Const {
-		val NAME_TAKEN = jsonObjectMapper.readTree("""{"id":"auth_status","status":false,"reason":"name_taken"}\n""")!!
+		val NAME_TAKEN = JsonUtils parse """{"id":"auth_status","status":false,"reason":"name_taken"}\n"""
 	}
 	
 	override val logger: KLogger = logger()

@@ -3,7 +3,7 @@ package ur.server.internal
 import com.fasterxml.jackson.databind.JsonNode
 import io.netty.buffer.ByteBuf
 import io.netty.buffer.ByteBufInputStream
-import ur.server.jsonObjectMapper
+import ur.server.JsonUtils
 
 /**
  * Handles the encoding/decoding of packets from bytes/json to json/bytes.
@@ -16,7 +16,7 @@ object InternalPacketCodec {
 	
 	@JvmStatic fun decode(data: ByteBuf, out: MutableList<Any>) {
 		val stream = ByteBufInputStream(data)
-		val rootNode: JsonNode = jsonObjectMapper.readTree(stream)
+		val rootNode: JsonNode = JsonUtils parse stream
 		out.add(rootNode)
 	}
 	
