@@ -30,13 +30,13 @@ fun main(args: Array<String>) {
 			.childHandler(object : ChannelInitializer<NioSocketChannel>() {
 				override fun initChannel(ch: NioSocketChannel) {
 					ch.pipeline().addLast(
-							JSONtoStringAdapter(),
 							HttpRequestDecoder(),
 							HttpObjectAggregator(65536),
 							HttpResponseEncoder(),
-							WebSocketServerProtocolHandler("/")
+							WebSocketServerProtocolHandler("/"),
+							JSONtoWSFrameAdapter()
 					).addLast(executorGroup, StringToJSONAdapter()
-//					).addLast(executorGroup, JSONtoStringAdapter()
+//					).addLast(executorGroup, JSONtoWSFrameAdapter()
 					)
 					/*, JsonPacketCodec(), PacketReceiveHandler(), PacketSendHandler(), FallbackReadHandler()*/
 				}

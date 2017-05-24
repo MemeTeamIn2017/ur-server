@@ -11,8 +11,8 @@ import mu.KLogger
 object Lobby : KLoggable {
 	
 	private object Const {
-		val NAME_TAKEN = JsonUtils parse """{"id":"auth_status","status":false,"reason":"name_taken"}\n"""
-		val AUTH_SUCCESSFUL = JsonUtils parse """{"id":"auth_status","status":true}\n"""
+		val NAME_TAKEN = JsonUtils parse """{"id":"${Packet.AUTH_STATUS.name}","status":false,"reason":"name_taken"}\n"""
+		val AUTH_SUCCESSFUL = JsonUtils parse """{"id":"${Packet.AUTH_STATUS.name}","status":true}\n"""
 	}
 	
 	override val logger: KLogger = logger()
@@ -42,12 +42,14 @@ object Lobby : KLoggable {
 	 * Gets called when [channel] sends an AUTHENTICATE packet.
 	 */
 	fun tryAuthenticate(channel: Channel, connectionType: ConnectionType, name: String) {
-		if (this has channel) { // the player has already been authenticated.
+		if (this has channel) {
+			// the player has already been authenticated.
+			// TODO punish(player reAuth)
 			logger.info { "Attempted ReAuthentication by ${this[channel]}" }
 			return
 		}
 		
-		// Sanitization
+		// Data normalization
 		if (name.contains(regexMatchHtmlTag)) {
 			// TODO punish(illegal characters in name)
 			logger.warn { "Name contains < or > [socket=${channel.remoteAddress()}, name=$name]" }

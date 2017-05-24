@@ -9,6 +9,7 @@ import ur.server.JsonUtils
  * Handles the encoding/decoding of packets from bytes/json to json/bytes.
  * Created by Braynstorm on 7.5.2017 г..
  */
+
 object InternalPacketCodec {
 	@JvmStatic fun encode(data: JsonNode, out: ByteBuf) {
 		out.writeCharSequence(data.toString(), Charsets.UTF_8)
