@@ -29,7 +29,9 @@ Example:
 
 #### CHALLENGE PLAYER - "CHALLENGE_PLAYER"
 Challenges another player in a game of Ur.
-The other Player can respond with a Yes/No. The client should wait for this response. (RESPONSE_HERE)
+The other Player can respond with a Yes/No. The client should wait for this response.
+
+Example: 
 ```json
 {
   "id": "CHALLENGE_PLAYER",
