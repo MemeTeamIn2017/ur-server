@@ -39,16 +39,18 @@ The other Player can respond with a Yes/No. The client should wait for this resp
 ## Server can send...
 
 #### AUTHENTICATION STATUS - "AUTH_STATUS"
-Signals that the server has rejected the Auth request.
-This could mean that the name is taken, or the server is under heavy load.
-The reason for the fail is given in the `reason` field.
+This is the packet that the client receives after an authentication attempt.
+if `successful` is `true`, `reason` is not going to be present.
+Otherwise, `reason` contains the reason for the auth fail.
 
 * successful: Boolean - the status, `true` if it was successful, `false` otherwise.
-* reason: String - the reason for the Auth fail.
+* [optional] reason: String - the reason for the Auth fail.
 
-Possible reasons:
+Possible values for `reason`:
 * NAME_TAKEN
-* TODO add other reasons
+* SUSPENDED
+
+*TODO add other reasons*
 
 Example:
 
