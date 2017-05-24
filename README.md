@@ -38,7 +38,7 @@ The other Player can respond with a Yes/No. The client should wait for this resp
 ```
 ## Server can send...
 
-#### LOGIN_FAILED - "AUTH_STATUS"
+#### AUTHENTICATION STATUS - "AUTH_STATUS"
 Signals that the server has rejected the Auth request.
 This could mean that the name is taken, or the server is under heavy load.
 The reason for the fail is given in the `reason` field.
