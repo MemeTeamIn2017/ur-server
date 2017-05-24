@@ -1,6 +1,8 @@
 /**
  * Copyright MemeTeam - 2017
  */
+package ur.server
+
 import io.netty.bootstrap.ServerBootstrap
 import io.netty.channel.ChannelFuture
 import io.netty.channel.ChannelInitializer
@@ -12,8 +14,6 @@ import io.netty.handler.codec.http.HttpRequestDecoder
 import io.netty.handler.codec.http.HttpResponseEncoder
 import io.netty.handler.codec.http.websocketx.WebSocketServerProtocolHandler
 import io.netty.util.concurrent.DefaultEventExecutorGroup
-import io.netty.util.internal.logging.InternalLoggerFactory
-import io.netty.util.internal.logging.Slf4JLoggerFactory
 import mu.KotlinLogging
 import java.util.*
 
@@ -30,11 +30,14 @@ fun main(args: Array<String>) {
 			.childHandler(object : ChannelInitializer<NioSocketChannel>() {
 				override fun initChannel(ch: NioSocketChannel) {
 					ch.pipeline().addLast(
+							JSONtoStringAdapter(),
 							HttpRequestDecoder(),
 							HttpObjectAggregator(65536),
 							HttpResponseEncoder(),
 							WebSocketServerProtocolHandler("/")
-					).addLast(executorGroup, WStoJSONAdapter())
+					).addLast(executorGroup, StringToJSONAdapter()
+//					).addLast(executorGroup, JSONtoStringAdapter()
+					)
 					/*, JsonPacketCodec(), PacketReceiveHandler(), PacketSendHandler(), FallbackReadHandler()*/
 				}
 			})

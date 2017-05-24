@@ -1,3 +1,5 @@
+package ur.server
+
 import com.fasterxml.jackson.core.JsonParseException
 import com.fasterxml.jackson.databind.JsonNode
 import io.netty.channel.ChannelHandlerContext
@@ -5,13 +7,9 @@ import io.netty.channel.SimpleChannelInboundHandler
 import io.netty.handler.codec.http.websocketx.TextWebSocketFrame
 import mu.KLoggable
 import mu.KLogger
-import ur.server.ConnectionType
-import ur.server.JsonUtils
-import ur.server.Lobby
-import ur.server.Packet
 
 
-class WStoJSONAdapter : SimpleChannelInboundHandler<TextWebSocketFrame>(), KLoggable {
+class StringToJSONAdapter : SimpleChannelInboundHandler<TextWebSocketFrame>(), KLoggable {
 	override val logger: KLogger = logger()
 	
 	/**
@@ -83,6 +81,7 @@ class WStoJSONAdapter : SimpleChannelInboundHandler<TextWebSocketFrame>(), KLogg
 	override fun channelActive(ctx: ChannelHandlerContext) {
 		logger.info { "Connected ${ctx.channel().remoteAddress()} }" }
 		Lobby.addChannel(ctx.channel())
+		ctx.channel().writeAndFlush("{\"id\":\"HI\"}\n")
 	}
 	
 	// on Connect
@@ -90,6 +89,7 @@ class WStoJSONAdapter : SimpleChannelInboundHandler<TextWebSocketFrame>(), KLogg
 		// on Disconnect
 		logger.info { "Disconnected ${ctx.channel().remoteAddress()} }" }
 		Lobby.removeChannel(ctx.channel())
+		
 	}
 	
 	

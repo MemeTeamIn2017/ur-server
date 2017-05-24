@@ -12,6 +12,7 @@ object Lobby : KLoggable {
 	
 	private object Const {
 		val NAME_TAKEN = JsonUtils parse """{"id":"auth_status","status":false,"reason":"name_taken"}\n"""
+		val AUTH_SUCCESSFUL = JsonUtils parse """{"id":"auth_status","status":true}\n"""
 	}
 	
 	override val logger: KLogger = logger()
@@ -67,6 +68,7 @@ object Lobby : KLoggable {
 		playersByChannel[channel] = player
 		
 		logger.info { "Successful authentication. Welcome $player!" }
+		player.send(Const.AUTH_SUCCESSFUL)
 		// TODO sendUpdateToEveryone.
 	}
 	
@@ -98,6 +100,7 @@ object Lobby : KLoggable {
 	 * Silent.
 	 */
 	fun removeChannel(channel: Channel) {
+		logger.trace { "Removing channel ${channel.remoteAddress()}" }
 		if (has(channel)) {
 			playersByName.remove(playersByChannel.remove(channel)?.name ?: return)
 		}

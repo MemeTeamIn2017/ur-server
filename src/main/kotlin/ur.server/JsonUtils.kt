@@ -11,6 +11,7 @@ object JsonUtils {
 	private val mapper = ObjectMapper()
 	infix fun parse(string: String): JsonNode = mapper.readTree(string)
 	infix fun parse(stream: InputStream): JsonNode = mapper.readTree(stream)
+	infix fun stringify(msg: JsonNode): String = mapper.writeValueAsString(msg)
 	
 	
 }
