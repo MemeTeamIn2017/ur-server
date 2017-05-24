@@ -16,7 +16,7 @@ fields' contents are defined by the **PACKET_ID**.
 This is the first packet the server receives. If any other packet is received before this one, the server will automatically ban for 1 hour (subject to change).
 
 Data fields:
-* name: String - the name of the player.
+* name: String - the name of the player. These MUST be without `<` and `>` characters in them, and longer than 4 characters.
 
 Example:
 ```json
@@ -25,7 +25,6 @@ Example:
   "name": "NoobSlay3r"
 }
 ```
-
 
 #### CHALLENGE PLAYER - "CHALLENGE_PLAYER"
 Challenges another player in a game of Ur.
@@ -63,6 +62,44 @@ Example:
   "reason": "NAME_TAKEN"
 }
 ```
+#### LIST OF PLAYERS IN THE LOBBY - "LOBBY_LIST"
+This packet will be sent right after AUTH_STATUS for the newly authenticated player,
+to be updated on the lobby player list. This packet is never going to be sent after that.
+Instead, for each player joining or leaving there will be another packet.
+
+#### PLAYER JOINED LOBBY - "PLAYER_JOINED_LOBBY"
+This packet will be sent to all players everytime a player joins the lobby (a.k.a is authenticated).
+
+Fields:
+
+- name:String - the name of the player. These MUST be without `<` and `>` characters in them.
+- locale:String - the locale of the player. This is set by the player, but the default is GeoIP.
+
+Example:
+```json
+{
+  "id": "PLAYER_JOINED_LOBBY",
+  "name": "NoobMaster3311",
+  "locale": "BG"
+}
+```
+
+#### PLAYER LEFT LOBBY
+This packet will be sent to all players everytime a player leaves the lobby (a.k.a is disconnected).
+
+Fields:
+
+- name:String - the name of the player. These MUST be without `<` and `>` characters in them.
+
+Example:
+```json
+{
+  "id": "PLAYER_JOINED_LOBBY",
+  "name": "NoobMaster3311",
+  "locale": "BG"
+}
+```
+
 #### CHALLENGE RESPONSE - "CHALLENGE_RESPONSE"
 This packet is sent to a client when their opponent accepts or declines the request for a PvP game.
 
