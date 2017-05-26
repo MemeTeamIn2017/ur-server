@@ -15,14 +15,18 @@ fields' contents are defined by the **PACKET_ID**.
 
 This is the first packet the server receives. If any other packet is received before this one, the server will automatically ban for 1 hour (subject to change).
 
-Data fields:
+Mandatory fields:
 * name: String - the name of the player. These MUST be without `<` and `>` characters in them, and longer than 4 characters.
+
+Optional fields:
+* locale:String - the locale (country code) that this player wants to use, it is going to be used to display a flag-icon next to their name or whatever.
 
 Example:
 ```json
 {
   "id": "AUTH",
-  "name": "NoobSlay3r"
+  "name": "NoobSlay3r",
+  "locale": ""
 }
 ```
 
