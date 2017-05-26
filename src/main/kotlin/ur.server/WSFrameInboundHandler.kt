@@ -62,7 +62,7 @@ class WSFrameInboundHandler : SimpleChannelInboundHandler<TextWebSocketFrame>(),
 		
 		if (!Lobby.has(channel)) {
 			if (packetID == Packet.AUTH) {
-				Lobby.tryAuthenticate(channel, ConnectionType.WEB_SOCKET, json["name"].asText())
+				Lobby.tryAuthenticate(channel, ConnectionType.WEB_SOCKET, json["name"].asText(), json["locale"].asText())
 			} else {
 				// TODO punish(non-player sent non-auth packet)
 				logger.warn { "Non-player sent non-auth packet. [socket=${channel.remoteAddress()}, id=$packetID]" }

@@ -5,13 +5,12 @@ import com.fasterxml.jackson.databind.JsonNode
 import io.netty.channel.Channel
 import mu.KLoggable
 import mu.KLogger
-import java.util.*
 
 @JsonIgnoreProperties("connectionType", "remoteAddress", "logger")
 data class Player(private val channel: Channel,
                   val connectionType: ConnectionType,
                   val name: String,
-                  val locale: Locale = Locale.ENGLISH,
+                  val locale: String,
                   var ingame: Boolean = false
 ) : KLoggable {
 	

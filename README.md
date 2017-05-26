@@ -52,8 +52,9 @@ Otherwise, `reason` contains the reason for the auth fail.
 * successful: Boolean - the status, `true` if it was successful, `false` otherwise.
 
 **Optional fields**
-
 * reason: String - the reason for the Auth fail.
+* locale: String - if the authentication request was successful and the user had used GeoIP to determine the country
+code, this field will contain the country code of the player's GeoIP location.
 
 Possible values for `reason`:
 * TAKEN - if the name is already in use.

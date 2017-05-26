@@ -3,6 +3,7 @@ package ur.server
 import io.netty.channel.Channel
 import mu.KLoggable
 import mu.KLogger
+import java.util.*
 
 /**
  * Contains the Lobby logic.
@@ -14,7 +15,10 @@ object Lobby : KLoggable {
 		val AUTH_FAIL_TAKEN = """{"id":"${Packet.AUTH_STATUS.name}","status":false,"reason":"TAKEN"}"""
 		val AUTH_FAIL_LENGTH = """{"id":"${Packet.AUTH_STATUS.name}","status":false,"reason":"LENGTH"}"""
 		val AUTH_FAIL_ILLEGAL_CHARACTERS = """{"id":"${Packet.AUTH_STATUS.name}","status":false,"reason":"ILLEGAL_CHARACTERS"}"""
+		val AUTH_FAIL_INVALID_LOCALE = """{"id":"${Packet.AUTH_STATUS.name}","status":false,"reason":"INVALID_LOCALE"}"""
 		val AUTH_SUCCESSFUL = """{"id":"${Packet.AUTH_STATUS.name}","status":true}"""
+		
+		val LOCALES = Locale.getISOCountries().toSet()
 	}
 	
 	override val logger: KLogger = logger()
@@ -42,8 +46,9 @@ object Lobby : KLoggable {
 	
 	/**
 	 * Gets called when [channel] sends an AUTHENTICATE packet.
+	 * If [locale] is null, then it will use GeoIPProvider to determine the locale.
 	 */
-	fun tryAuthenticate(channel: Channel, connectionType: ConnectionType, name: String) {
+	fun tryAuthenticate(channel: Channel, connectionType: ConnectionType, name: String, locale: String) {
 		// Data normalization
 		
 		
@@ -66,11 +71,30 @@ object Lobby : KLoggable {
 			return
 		}
 		
+		var needsToKnowLocale = false
+		
+		val countryCode: String = if (locale != "") {
+			logger.trace { "Got a non-empty locale" }
+			if (Const.LOCALES.contains(locale)) {
+				logger.trace { "Locale is valid." }
+				locale
+			} else {
+				logger.info { "Locale is not valid" }
+				return
+			}
+		} else {
+			// TODO addFunctionality - geoIP
+			needsToKnowLocale = true
+			logger.trace { "Using GeoIPProvider to determine locale." }
+			return
+		}
+		
 		// We've passed all the tests. Make the new player and add them to the lobby
 		// action! :D
 		
 		channels.remove(channel)
-		val player = Player(channel, connectionType, name /*, TODO locale */)
+		
+		val player = Player(channel, connectionType, name, countryCode)
 		
 		val playerListPacket = JsonUtils stringify PacketPlayerList(playersByName.values)
 		val playerJoinedPacket = JsonUtils stringify PlayerJoinedPacket(player)
@@ -84,7 +108,7 @@ object Lobby : KLoggable {
 		playersByChannel[channel] = player
 		
 		logger.info { "Successful authentication. Welcome $player!" }
-		player.send(Const.AUTH_SUCCESSFUL)
+		player.send(JsonUtils stringify AuthStatusPacket(true, countryCode = countryCode))
 		
 		logger.debug { playerListPacket }
 		player.send(playerListPacket)
