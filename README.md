@@ -59,6 +59,7 @@ Possible values for `reason`:
 * TAKEN - if the name is already in use.
 * ILLEGAL_CHARACTERS - contains `<` or `>` 
 * LENGTH - too short or too long (must be >= 4 and <= 20))
+* INVALID_LOCALE - if the locale string is not a valid one.
 * SUSPENDED - NYI.
 
 *TODO add other reasons*
