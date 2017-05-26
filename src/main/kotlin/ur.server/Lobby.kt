@@ -3,7 +3,6 @@ package ur.server
 import io.netty.channel.Channel
 import mu.KLoggable
 import mu.KLogger
-import ur.server.geoloc.GeoIP
 import java.util.*
 
 /**
@@ -87,7 +86,7 @@ object Lobby : KLoggable {
 			// TODO addFunctionality - geoIP
 			needsToKnowLocale = true
 			logger.trace { "Using GeoIPProvider to determine locale." }
-			GeoIP.lookup(channel.remoteAddress())
+			return
 		}
 		
 		// We've passed all the tests. Make the new player and add them to the lobby
@@ -110,7 +109,7 @@ object Lobby : KLoggable {
 		
 		
 		logger.info { "Successful authentication. Welcome $player!" }
-		player.send(JsonUtils stringify AuthStatusPacket(true, locale = if (needsToKnowLocale) countryCode else null))
+		player.send(JsonUtils stringify AuthStatusPacket(true, countryCode = countryCode))
 		
 		logger.debug { playerListPacket }
 		player.send(playerListPacket)
