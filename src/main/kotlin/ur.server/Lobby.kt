@@ -107,6 +107,7 @@ object Lobby : KLoggable {
 		playersByName[name] = player
 		playersByChannel[channel] = player
 		
+		
 		logger.info { "Successful authentication. Welcome $player!" }
 		player.send(JsonUtils stringify AuthStatusPacket(true, countryCode = countryCode))
 		
