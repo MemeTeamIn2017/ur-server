@@ -95,16 +95,18 @@ Instead, for each player joining or leaving there will be another packet.
 This packet will be sent to all players everytime a player joins the lobby (a.k.a is authenticated).
 
 **Mandatory fields**
-
-- name:String - the name of the player. These MUST be without `<` and `>` characters in them.
-- locale:String - the locale of the player. This is set by the player, but the default is GeoIP.
+* player:Object - the player object
+    * name:String - the name of the player. These MUST be without `<` and `>` characters in them.
+    * locale:String - the locale of the player. This is set by the player, but the default is GeoIP.
 
 Example:
 ```json
 {
   "id": "PLAYER_JOINED_LOBBY",
-  "name": "NoobMaster3311",
-  "locale": "bg"
+  "player": {
+    "name": "NoobMaster3311",
+    "locale": "bg"
+  }
 }
 ```
 
