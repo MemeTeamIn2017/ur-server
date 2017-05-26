@@ -26,7 +26,7 @@ Example:
 {
   "id": "AUTH",
   "name": "NoobSlay3r",
-  "locale": ""
+  "locale": "en"
 }
 ```
 
@@ -48,8 +48,12 @@ This is the packet that the client receives after an authentication attempt.
 if `successful` is `true`, `reason` is not going to be present.
 Otherwise, `reason` contains the reason for the auth fail.
 
+**Mandatory fields:** 
 * successful: Boolean - the status, `true` if it was successful, `false` otherwise.
-* [optional] reason: String - the reason for the Auth fail.
+
+*Optional fields*:
+
+* reason: String - the reason for the Auth fail.
 
 Possible values for `reason`:
 * TAKEN - if the name is already in use.
