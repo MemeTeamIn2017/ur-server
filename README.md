@@ -15,10 +15,10 @@ fields' contents are defined by the **PACKET_ID**.
 
 This is the first packet the server receives. If any other packet is received before this one, the server will automatically ban for 1 hour (subject to change).
 
-Mandatory fields:
+_**Mandatory fields**_
 * name: String - the name of the player. These MUST be without `<` and `>` characters in them, and longer than 4 characters.
 
-Optional fields:
+**Optional fields**
 * locale:String - the locale (country code) that this player wants to use, it is going to be used to display a flag-icon next to their name or whatever.
 
 Example:
@@ -48,10 +48,10 @@ This is the packet that the client receives after an authentication attempt.
 if `successful` is `true`, `reason` is not going to be present.
 Otherwise, `reason` contains the reason for the auth fail.
 
-**Mandatory fields:** 
+**Mandatory fields** 
 * successful: Boolean - the status, `true` if it was successful, `false` otherwise.
 
-*Optional fields*:
+**Optional fields**
 
 * reason: String - the reason for the Auth fail.
 
@@ -93,7 +93,7 @@ Instead, for each player joining or leaving there will be another packet.
 #### PLAYER JOINED LOBBY - "PLAYER_JOINED_LOBBY"
 This packet will be sent to all players everytime a player joins the lobby (a.k.a is authenticated).
 
-Fields:
+**Mandatory fields**
 
 - name:String - the name of the player. These MUST be without `<` and `>` characters in them.
 - locale:String - the locale of the player. This is set by the player, but the default is GeoIP.
@@ -107,10 +107,10 @@ Example:
 }
 ```
 
-#### PLAYER LEFT LOBBY
+#### PLAYER LEFT LOBBY - "PLAYER_LEFT_LOBBY"
 This packet will be sent to all players everytime a player leaves the lobby (a.k.a is disconnected).
 
-Fields:
+**Mandatory fields**
 
 - name:String - the name of the player. These MUST be without `<` and `>` characters in them.
 
@@ -126,7 +126,7 @@ Example:
 #### CHALLENGE RESPONSE - "CHALLENGE_RESPONSE"
 This packet is sent to a client when their opponent accepts or declines the request for a PvP game.
 
-Fields:
+**Mandatory fields**
 * opponent:String - the name of the opponent.
 * accepted:Boolean - `true` if the opponent accepted, `false` otherwise.
 
