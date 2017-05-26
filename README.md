@@ -103,7 +103,7 @@ Example:
 {
   "id": "PLAYER_JOINED_LOBBY",
   "name": "NoobMaster3311",
-  "locale": "BG"
+  "locale": "bg"
 }
 ```
 
@@ -119,7 +119,7 @@ Example:
 {
   "id": "PLAYER_LEFT_LOBBY",
   "name": "NoobMaster3311",
-  "locale": "BG"
+  "locale": "bg"
 }
 ```
 
