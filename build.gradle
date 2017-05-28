@@ -6,6 +6,7 @@ buildscript {
     ext.ktorVersion = "0.3.2"
 
     repositories {
+        mavenLocal()
         mavenCentral()
     }
     dependencies {
@@ -21,11 +22,22 @@ apply plugin: 'org.junit.platform.gradle.plugin'
 sourceCompatibility = 1.8
 
 repositories {
+    mavenLocal()
     mavenCentral()
+
+    jcenter()
+    maven {
+        url "https://dl.bintray.com/kotlin/exposed/"
+    }
 }
 
 dependencies {
     compile "org.jetbrains.kotlin:kotlin-stdlib-jre8:$kotlin_version"
+
+    compile 'org.jetbrains.exposed:exposed:0.8' // SQL typese
+
+    compile "org.xerial:sqlite-jdbc:3.16.1" // JDBC driver for SQLite
+
     compile "io.netty:netty-all:4.1.9.Final"
     compile "com.fasterxml.jackson.core:jackson-core:2.8.0.rc1"
     compile "com.fasterxml.jackson.core:jackson-databind:2.8.0.rc1"
@@ -34,6 +46,7 @@ dependencies {
     compile 'org.slf4j:slf4j-log4j12:1.7.25'
     compile 'org.apache.logging.log4j:log4j:2.8.2'
     compile 'io.github.microutils:kotlin-logging:1.4.4'
+
 
     testCompile "org.junit.jupiter:junit-jupiter-api:5.0.0-M4"
     testRuntime "org.junit.jupiter:junit-jupiter-engine:5.0.0-M4"

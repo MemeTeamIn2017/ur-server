@@ -80,7 +80,7 @@ object Lobby : KLoggable {
 				logger.trace { "Locale is valid." }
 				locale
 			} else {
-				logger.info { "Locale is not valid" }
+				logger.info { "Locale is not valid, $locale" }
 				return
 			}
 		} else {
@@ -91,7 +91,7 @@ object Lobby : KLoggable {
 		}
 		
 		// We've passed all the tests. Make the new player and add them to the lobby
-		// action! :D
+		// action! ::
 		
 		channels.remove(channel)
 		

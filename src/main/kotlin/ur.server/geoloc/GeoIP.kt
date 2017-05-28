@@ -37,7 +37,6 @@ object GeoIP : GeoIPProvider, KLoggable {
 	override val logger = logger()
 	
 	override fun lookup(ip: String): String {
-		
 		// TODO perform lookup in the database
 		return getCountry(ip)
 	}
@@ -56,13 +55,15 @@ object GeoIP : GeoIPProvider, KLoggable {
 		val line = reader.readLine()
 		reader.close()
 		
+		logger.trace { "Got response from GeoIP webservice for $ip : $line" }
+		
 		val firstComma = line.indexOf(',') + 1
 		val result = line.substring(
 				firstComma,
 				firstComma + 2
 		)
 		
-		println(line)
+		logger.trace { "Resulting locale is $result" }
 		
 		return result
 		
