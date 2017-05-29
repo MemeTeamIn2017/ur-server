@@ -1,7 +1,8 @@
-package ur.server.geoloc
+package ur.server
 
 import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.Test
+import ur.server.geoloc.GeoIP
 
 /**
  * Created by braynstorm on 27.05.17.
