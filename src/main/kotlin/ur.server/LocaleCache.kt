@@ -4,9 +4,6 @@ import mu.KLoggable
 import org.sqlite.SQLiteException
 import java.sql.DriverManager
 
-/**
- * Created by braynstorm on 29/05/17.
- */
 object LocaleCache : KLoggable, AutoCloseable {
 	override val logger = logger()
 	
