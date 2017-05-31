@@ -1,3 +1,7 @@
+# Clients
+The game curerntly has an development client hosted on http://urgame.freeddns.org/ur/
+Though it won't be available 24/7.
+
 # Ur Game Protocol Specification
 
 This protocol uses JSON as a data transfer means and it inherits
